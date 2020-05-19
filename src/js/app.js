@@ -1,24 +1,32 @@
-const apiKey = `6948fd5a50d6bf51eb00c914a734fd74`
+const apiKey = `6948fd5a50d6bf51eb00c914a734fd74`;
 
-const getLocation = new Promise((resolve, reject) => {
-  navigator.geolocation.getCurrentPosition(
-    position => { resolve(position.coords) },
-    error => { reject(error) }
-  );
-}).then(coordinates => {
-  getCurrentConditions(coordinates.latitude, coordinates.longitude);
-}).catch(error => console.log(`Fail to locate!`));
+navigator.geolocation.getCurrentPosition(position => {
+  getCurrentConditions(position.coords.latitude, position.coords.longitude);
+});
 
+function getCurrentConditions(lat, lon) {
+  fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&units=metric&appid=${apiKey}`)
+    .then(response => {
+      if (response.ok) {
+        return response.json();
+      } else {
+        throw new Error(`Fail to get user location.`);
+      }
+    })
+    .then(weather => {
+      updateCurrentConditions(weather);
+    })
+}
 
+function updateCurrentConditions(weather) {
+  const currentConditionEle = document.querySelector(`.current-conditions`);
 
-// fetch(`https://api.openweathermap.org/data/2.5/weather?lat=35&lon=139&appid=${apiKey}`)
-//   .then(response => {
-//     if (response.ok) {
-//       return response.json();
-//     } else {
-//       throw new Error(`Fail to retrieve data.`);
-//     }
-//   })
-//   .then(data => {
-//     console.log(data);
-//   })
+  currentConditionEle.innerHTML = `
+    <h2>Current Conditions</h2>
+    <img src="http://openweathermap.org/img/wn/${weather.weather[0].icon}@2x.png" />
+    <div class="current">
+      <div class="temp">${parseInt(weather.main.temp)}℃</div>
+      <div class="condition">${weather.weather[0].description}</div>
+    </div>
+  `;
+}
