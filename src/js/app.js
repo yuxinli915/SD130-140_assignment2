@@ -13,7 +13,20 @@ function getCurrentConditions(lat, lon) {
         throw new Error(`Fail to get user location.`);
       }
     })
-    .then(data => {
-      console.log(data);
+    .then(weather => {
+      updateCurrentConditions(weather);
     })
+}
+
+function updateCurrentConditions(weather) {
+  const currentConditionEle = document.querySelector(`.current-conditions`);
+
+  currentConditionEle.innerHTML = `
+    <h2>Current Conditions</h2>
+    <img src="http://openweathermap.org/img/wn/${weather.weather[0].icon}@2x.png" />
+    <div class="current">
+      <div class="temp">${parseInt(weather.main.temp)}℃</div>
+      <div class="condition">${weather.weather[0].description}</div>
+    </div>
+  `;
 }
