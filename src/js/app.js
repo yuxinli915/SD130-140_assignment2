@@ -2,6 +2,7 @@ const apiKey = `6948fd5a50d6bf51eb00c914a734fd74`;
 
 navigator.geolocation.getCurrentPosition(position => {
   getCurrentConditions(position.coords.latitude, position.coords.longitude);
+  get5Days(position.coords.latitude, position.coords.longitude);
 });
 
 function getCurrentConditions(lat, lon) {
@@ -29,4 +30,18 @@ function updateCurrentConditions(weather) {
       <div class="condition">${weather.weather[0].description}</div>
     </div>
   `;
+}
+
+function get5Days(lat, lon) {
+  fetch(`https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&units=metric&appid=${apiKey}`)
+    .then(response => {
+      if (response.ok) {
+        return response.json();
+      } else {
+        throw new Error(`Fail to get user location.`);
+      }
+    })
+    .then(weathers => {
+      console.log(weathers.list);
+    })
 }
