@@ -47,10 +47,14 @@ function get5DaysConditions(lat, lon) {
       });
 
       for (let x = 0; x < 5; x++) {
-        weathersData[weathersData.length] = { day: forecast[0].weekday }
-        weathersData[weathersData.length - 1].weathers = forecast.filter(timeSlot => timeSlot.weekday === weathersData[weathersData.length - 1].day);
+        weathersData[weathersData.length] = { 
+          day: forecast[0].weekday,
+          weathers: forecast.filter(timeSlot => timeSlot.weekday === forecast[0].weekday)
+        };
+
         forecast = forecast.filter(timeSlot => timeSlot.weekday !== weathersData[weathersData.length - 1].day);
       }
+      
       return weathersData;
     })
     .then(data => {
