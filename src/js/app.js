@@ -53,27 +53,24 @@ function get5DaysConditions(lat, lon) {
       }
       return weathersData;
     })
-    .then(data => update5DaysConditions(data));
-  // for (let x = 0; x < weathers.list.length; x = x + dataSetPerDay) {
-  //   const date = new Date(weathers.list[x].dt_txt);
-  //   weathersData[weathersData.length] = {
-  //     day: new Intl.DateTimeFormat('en-US', { weekday: `long` }).format(date),
-  //     icon: weathers.list[x + 3].weather[0].icon,
-  //     description: weathers.list[x + 3].weather[0].description,
-  //   };
+    .then(data => {
+      getHighAndLow(data);
+      update5DaysConditions(data);
+    })
 
-  //   for (let y = x; y < x + dataSetPerDay; y++) {
-  //     if (weathersData[weathersData.length - 1].high === undefined || weathers.list[y].main[`temp_max`] > weathersData[weathersData.length - 1].high) {
-  //       weathersData[weathersData.length - 1].high = weathers.list[y].main[`temp_max`];
-  //     }
+  function getHighAndLow(weathersData) {
+    weathersData.forEach(day => {
+      day.weathers.forEach(timeSlot => {
+        if (day.high === undefined || timeSlot.main[`temp_max`] > day.high) {
+          day.high = timeSlot.main[`temp_max`];
+        }
 
-  //     if (weathersData[weathersData.length - 1].low === undefined || weathers.list[y].main[`temp_min`] < weathersData[weathersData.length - 1].low) {
-  //       weathersData[weathersData.length - 1].low = weathers.list[y].main[`temp_min`];
-  //     }
-  //   }
-  // }
-  // return weathersData;
-
+        if (day.low === undefined || timeSlot.main[`temp_min`] < day.low) {
+          day.low = timeSlot.main[`temp_min`];
+        }
+      })
+    })
+  }
 }
 
 function update5DaysConditions(weathersData) {
@@ -84,10 +81,10 @@ function update5DaysConditions(weathersData) {
     html += `
       <div class="day">
         <h3>${day.day}</h3>
-        <img src="http://openweathermap.org/img/wn/${day.icon}@2x.png">
-        <div class="description">${day.description}</div>
+        <img src="http://openweathermap.org/img/wn/${day.weathers[3].weather[0].icon}@2x.png">
+        <div class="description">${day.weathers[3].weather[0].description}</div>
         <div class="temp">
-          <span class="high">${parseInt(day.high)}℃</span>/<span class="low">${parseInt(day.low)}℃</span>
+          <span class="high">${Math.round(day.high)}℃</span>/<span class="low">${Math.round(day.low)}℃</span>
         </div>
       </div>
     `;
