@@ -41,28 +41,39 @@ function get5DaysConditions(lat, lon) {
     })
     .then(weathers => {
       const weathersData = [];
-      const dataSetPerDay = 8;
-      for (let x = 0; x < weathers.list.length; x = x + dataSetPerDay) {
-        const date = new Date(weathers.list[x].dt_txt);
-        weathersData[weathersData.length] = {
-          day: new Intl.DateTimeFormat('en-US', { weekday: `long` }).format(date),
-          icon: weathers.list[x + 3].weather[0].icon,
-          description: weathers.list[x + 3].weather[0].description,
-        };
+      let forecast = weathers.list.filter(timeSlot => new Date(timeSlot.dt_txt).getDate() !== new Date().getDate());
+      forecast.forEach(timeSlot => {
+        timeSlot.weekday = new Intl.DateTimeFormat('en-US', { weekday: `long` }).format(new Date(timeSlot.dt_txt));
+      });
 
-        for (let y = x; y < x + dataSetPerDay; y++) {
-          if (weathersData[weathersData.length - 1].high === undefined || weathers.list[y].main[`temp_max`] > weathersData[weathersData.length - 1].high) {
-            weathersData[weathersData.length - 1].high = weathers.list[y].main[`temp_max`];
-          }
-
-          if (weathersData[weathersData.length - 1].low === undefined || weathers.list[y].main[`temp_min`] < weathersData[weathersData.length - 1].low) {
-            weathersData[weathersData.length - 1].low = weathers.list[y].main[`temp_min`];
-          }
-        }
+      for (let x = 0; x < 5; x++) {
+        weathersData[weathersData.length] = { day: forecast[0].weekday }
+        weathersData[weathersData.length - 1].weathers = forecast.filter(timeSlot => timeSlot.weekday === weathersData[weathersData.length - 1].day);
+        forecast = forecast.filter(timeSlot => timeSlot.weekday !== weathersData[weathersData.length - 1].day);
       }
       return weathersData;
     })
     .then(data => update5DaysConditions(data));
+  // for (let x = 0; x < weathers.list.length; x = x + dataSetPerDay) {
+  //   const date = new Date(weathers.list[x].dt_txt);
+  //   weathersData[weathersData.length] = {
+  //     day: new Intl.DateTimeFormat('en-US', { weekday: `long` }).format(date),
+  //     icon: weathers.list[x + 3].weather[0].icon,
+  //     description: weathers.list[x + 3].weather[0].description,
+  //   };
+
+  //   for (let y = x; y < x + dataSetPerDay; y++) {
+  //     if (weathersData[weathersData.length - 1].high === undefined || weathers.list[y].main[`temp_max`] > weathersData[weathersData.length - 1].high) {
+  //       weathersData[weathersData.length - 1].high = weathers.list[y].main[`temp_max`];
+  //     }
+
+  //     if (weathersData[weathersData.length - 1].low === undefined || weathers.list[y].main[`temp_min`] < weathersData[weathersData.length - 1].low) {
+  //       weathersData[weathersData.length - 1].low = weathers.list[y].main[`temp_min`];
+  //     }
+  //   }
+  // }
+  // return weathersData;
+
 }
 
 function update5DaysConditions(weathersData) {
