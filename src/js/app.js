@@ -46,16 +46,22 @@ function get5Days(lat, lon) {
       const dataSetPerDay = 8;
       for (let x = 0; x < weathers.list.length; x = x + dataSetPerDay) {
         const date = new Date(weathers.list[x].dt_txt);
-        weathersData[weathersData.length] = { day: new Intl.DateTimeFormat('en-US', { weekday: `long` }).format(date) };
-        weathersData[weathersData.length - 1][`icon`] = weathers.list[x + 3].weather[0].icon;
-        weathersData[weathersData.length - 1][`description`] = weathers.list[x + 3].weather[0].description;
-        
-        for (let y = x; y < x + 5; y++) {
-          
-          
+        weathersData[weathersData.length] = {
+          day: new Intl.DateTimeFormat('en-US', { weekday: `long` }).format(date),
+          icon: weathers.list[x + 3].weather[0].icon,
+          description: weathers.list[x + 3].weather[0].description,
+        };
+
+        for (let y = x; y < x + dataSetPerDay; y++) {
+          if (weathersData[weathersData.length - 1].high === undefined || weathers.list[y].main[`temp_max`] > weathersData[weathersData.length - 1].high) {
+            weathersData[weathersData.length - 1].high = weathers.list[y].main[`temp_max`];
+          }
+
+          if (weathersData[weathersData.length - 1].low === undefined || weathers.list[y].main[`temp_min`] < weathersData[weathersData.length - 1].low) {
+            weathersData[weathersData.length - 1].low = weathers.list[y].main[`temp_min`];
+          }
         }
-        console.log(weathersData);
       }
-      console.log(weathers.list);
+      return weathersData;
     })
 }
