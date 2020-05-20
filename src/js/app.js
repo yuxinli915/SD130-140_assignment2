@@ -42,6 +42,14 @@ function get5Days(lat, lon) {
       }
     })
     .then(weathers => {
+      const weathersData = [];
+      const dataSetPerDay = 8;
+      for (let x = 0; x < weathers.list.length; x = x + dataSetPerDay) {
+        const date = new Date(weathers.list[x].dt_txt);
+        weathersData[weathersData.length] = { day: new Intl.DateTimeFormat('en-US', { weekday: `long` }).format(date) };
+        weathersData[weathersData.length - 1][`icon`] = weathers.list[x + 3].weather[0].icon;
+        console.log(weathersData);
+      }
       console.log(weathers.list);
     })
 }
