@@ -48,6 +48,12 @@ function get5Days(lat, lon) {
         const date = new Date(weathers.list[x].dt_txt);
         weathersData[weathersData.length] = { day: new Intl.DateTimeFormat('en-US', { weekday: `long` }).format(date) };
         weathersData[weathersData.length - 1][`icon`] = weathers.list[x + 3].weather[0].icon;
+        weathersData[weathersData.length - 1][`description`] = weathers.list[x + 3].weather[0].description;
+        
+        for (let y = x; y < x + 5; y++) {
+          
+          
+        }
         console.log(weathersData);
       }
       console.log(weathers.list);
