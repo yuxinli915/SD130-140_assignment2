@@ -25,15 +25,15 @@ function compressHTML() {
     .pipe(gulp.dest(`dist`));
 }
 
-// function sync() {
-//   browserSync.init({ server: { baseDir: `./dist` } });
-//   gulp.watch(`dist/js/*.js`).on(`change`, reload);
-//   gulp.watch(`dist/css/*.css`).on(`change`, reload);
-//   gulp.watch(`dist/*.html`).on(`change`, reload);
-// }
+function sync() {
+  browserSync.init({ server: { baseDir: `./dist` } });
+  gulp.watch(`dist/js/*.js`).on(`change`, reload);
+  gulp.watch(`dist/css/*.css`).on(`change`, reload);
+  gulp.watch(`dist/*.html`).on(`change`, reload);
+}
 
 exports.default = gulp.parallel(compressCSS, compressJS, compressHTML);
-// gulp.watch(`src/css/*.css`, compressCSS);
-// gulp.watch(`src/js/*.js`, compressJS);
-// gulp.watch(`src/*.html`, compressHTML);
-// sync();
+gulp.watch(`src/css/*.css`, compressCSS);
+gulp.watch(`src/js/*.js`, compressJS);
+gulp.watch(`src/*.html`, compressHTML);
+sync();
